@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer CRUD App</title>
+    <link rel="stylesheet" href="#">
+    <style>
+            body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+form {
+    margin: 20px auto;
+    width: 50%;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+}
+
+input {
+    padding: 10px;
+    margin: 5px;
+    width: 80%;
+    border: 1px solid #ccc;
+}
+
+table {
+    width: 60%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+button {
+    padding: 8px 12px;
+    border: none;
+    color: white;
+    border-radius: 5px;
+}
+
+button:nth-child(1) { background-color: #28a745; }
+button:nth-child(2) { background-color: #dc3545; }
+
+    </style>
+</head>
+<body>
+
+    <h2>Customer Management System</h2>
+
+    <form id="customerForm">
+        <input type="text" id="name" placeholder="Enter Name" required>
+        <input type="text" id="city" placeholder="Enter City" required>
+        <input type="text" id="mobile" placeholder="Enter Mobile No" required>
+        <button type="submit">Add Customer</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>City</th>
+                <th>Mobile No</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="customersList"></tbody>
+    </table>
+
+    <script>
+        const API_URL = 'http://localhost:5000/customers';
+
+        async function fetchCustomers() {
+            const res = await fetch(API_URL);
+            const customers = await res.json();
+            document.getElementById('customersList').innerHTML = customers.map(customer => `
+                <tr>
+                    <td><input type="text" value="${customer.name}" id="name-${customer.id}"></td>
+                    <td><input type="text" value="${customer.city}" id="city-${customer.id}"></td>
+                    <td><input type="text" value="${customer.mobile}" id="mobile-${customer.id}"></td>
+                    <td>
+                        <button onclick="updateCustomer('${customer.id}')">Update</button>
+                        <button onclick="deleteCustomer('${customer.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function addCustomer(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const city = document.getElementById('city').value;
+            const mobile = document.getElementById('mobile').value;
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, city, mobile })
+            });
+
+            document.getElementById('customerForm').reset();
+            fetchCustomers();
+        }
+
+        async function updateCustomer(id) {
+            const name = document.getElementById(`name-${id}`).value;
+            const city = document.getElementById(`city-${id}`).value;
+            const mobile = document.getElementById(`mobile-${id}`).value;
+
+            await fetch(`${API_URL}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, city, mobile })
+            });
+
+            fetchCustomers();
+        }
+
+        async function deleteCustomer(id) {
+            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            fetchCustomers();
+        }
+
+        document.getElementById('customerForm').addEventListener('submit', addCustomer);
+        fetchCustomers();
+    </script>
+
+</body>
+</html>
