@@ -1,0 +1,15 @@
+[
+    {
+      "id": 1,
+      "name": "padma",
+      "username": "padma1301",
+      "email": "padma.mca@srmvec.ac.in",
+      "address": {
+      
+        "city": "Guduvancherry",
+        "zipcode": "627005"
+       
+    
+      }
+    }
+]
