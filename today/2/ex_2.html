@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User List</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #eee;
+      padding: 10px;
+    }
+
+    #card-container {
+      margin-top: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px auto;
+      width: 280px;
+    }
+  </style>
+</head>
+<body>
+  <h2>User List</h2>
+  <div id="card-container"></div>
+
+  <script>
+    fetch('user.json')
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('card-container');
+        data.forEach(user => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h3>${user.name}</h3>
+            <p>Username: ${user.username}</p>
+            <p>Email: ${user.email}</p>
+          `;
+          container.appendChild(card);
+        });
+      })
+      .catch(error => console.error('Error:', error));
+  </script>
+</body>
+</html>
